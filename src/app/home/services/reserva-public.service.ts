@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { environment } from '../../enviroments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import {
   DepartamentoResponse,
@@ -13,7 +14,7 @@ import {
   MisReservasResponse,
 } from '../../interfaces';
 
-const baseUrl = 'http://localhost:8080/api/public';
+const baseUrl = `${environment.apiUrl}/api/public`;
 
 @Injectable({
   providedIn: 'root',
@@ -102,18 +103,18 @@ export class ReservaPublicService {
   getMisReservas(fechaInicio?: string, fechaFin?: string): Observable<MisReservasResponse> {
     let url = `${baseUrl}/reserva/mis-reservas`;
     const params: string[] = [];
-    
+
     if (fechaInicio) {
       params.push(`fechaInicio=${fechaInicio}`);
     }
     if (fechaFin) {
       params.push(`fechaFin=${fechaFin}`);
     }
-    
+
     if (params.length > 0) {
       url += '?' + params.join('&');
     }
-    
+
     return this.http.get<MisReservasResponse>(url).pipe(
       catchError((error: any) => {
         console.error('Error al buscar reservas:', error);
