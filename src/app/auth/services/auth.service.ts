@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { environment } from '../../enviroments/environment.prod';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { LoginRequest, RegisterRequest, AuthResponse } from '../interfaces/auth.interface';
 import { UserResponse } from '../interfaces/userResponse.interface';
 
 type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
-const baseUrl = 'http://localhost:8080/api/v1';
+const baseUrl = `${environment.apiUrl}/api/v1`;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

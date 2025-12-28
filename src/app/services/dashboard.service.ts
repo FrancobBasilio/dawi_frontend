@@ -1,3 +1,4 @@
+import { environment } from '../enviroments/environment.prod';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
@@ -6,7 +7,7 @@ import { DashboardStats } from '../interfaces';
 // Re-exportar para uso externo
 export type { DashboardStats } from '../interfaces';
 
-const baseUrl = 'http://localhost:8080/api/admin/dashboard';
+const baseUrl = `${environment.apiUrl}/api/admin/dashboard`;
 
 @Injectable({
   providedIn: 'root',

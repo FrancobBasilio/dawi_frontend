@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { environment } from '../enviroments/environment.prod';
 import { catchError, Observable, throwError } from 'rxjs';
 import { DepartamentoResponse, DepartamentoRequest } from '../interfaces';
 
-const baseUrl = 'http://localhost:8080/api/admin';
+const baseUrl = `${environment.apiUrl}/api/admin`;
 
 @Injectable({
   providedIn: 'root',
