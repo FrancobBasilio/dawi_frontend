@@ -1,5 +1,5 @@
 import { HttpHandlerFn, HttpRequest, HttpErrorResponse } from '@angular/common/http';
-import { environment } from '../enviroments/environment';
+import { environment } from '../../enviroments/enviroment';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 

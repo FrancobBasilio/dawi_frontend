@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../enviroments/environment';
+import { environment } from '../enviroments/enviroment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { HotelResponse, HotelRequest } from '../interfaces';
 
