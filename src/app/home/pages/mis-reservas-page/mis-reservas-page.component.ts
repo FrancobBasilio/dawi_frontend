@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../enviroments/environment';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { ReservaPublicService } from '../../services/reserva-public.service';
@@ -133,7 +134,7 @@ export class MisReservasPageComponent implements OnInit {
 
     this.procesando.set(true);
 
-    this.http.delete(`http://localhost:8080/api/public/reserva/${reserva.id}`).subscribe({
+    this.http.delete(`${environment.apiUrl}/api/public/reserva/${reserva.id}`).subscribe({
       next: () => {
         this.procesando.set(false);
         this.cerrarModalEliminar();
@@ -234,7 +235,7 @@ export class MisReservasPageComponent implements OnInit {
     this.editError.set(null);
 
     this.http
-      .put(`http://localhost:8080/api/public/reserva/${reserva.id}`, {
+      .put(`${environment.apiUrl}/api/public/reserva/${reserva.id}`, {
         fechaInicio: fechaInicio,
         fechaFin: fechaFin,
       })
