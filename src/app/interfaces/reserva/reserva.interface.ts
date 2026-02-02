@@ -46,7 +46,7 @@ export interface ClienteSimple {
   apellido: string;
   email: string;
   telefono: string;
-  documento: string;
+  dni: string;
 }
 
 /**
@@ -69,8 +69,10 @@ export interface ReservaListResponse {
   fechaReserva: string;
   fechaInicio: string;
   fechaFin: string;
+  fechaCancelacion?: string;
   total: number;
   estado: string;
+  motivoCancelacion?: string;
   hotel: HotelSimple;
   cliente: ClienteSimple;
   detalles: DetalleSimple[];
@@ -85,9 +87,11 @@ export interface ReservaResponse {
   fechaReserva: string;
   fechaInicio: string;
   fechaFin: string;
+  fechaCancelacion?: string;
   total: number;
   estado: string;
-  hotel: HotelResponse;
+  motivoCancelacion?: string;
+  hotel: HotelSimple;
   cliente: ClienteResponse;
   detalles: DetalleReserva[];
 }
@@ -114,6 +118,7 @@ export interface ReservaUpdateResponse {
  * DTO de request para crear reserva - Coincide con backend ReservaRequest.java
  */
 export interface ReservaRequest {
+  hotelId: number;
   fechaInicio: string;
   fechaFin: string;
   habitacionesIds: number[];
@@ -138,6 +143,7 @@ export interface ReservaAdminUpdateDTO {
   hotelId: number;
   cliente: ClienteRequest;
   habitaciones: number[];
+  motivoCancelacion?: string;
 }
 
 // ==================== TIPOS PARA MIS RESERVAS ====================
@@ -150,10 +156,22 @@ export interface MisReservasVacio {
   reservas: [];
 }
 
+export interface MisReservasItem {
+  id: number;
+  fechaInicio: string;
+  fechaFin: string;
+  fechaCancelacion?: string;
+  total: number;
+  estado: string;
+  hotelNombre: string;
+  cantidadHabitaciones: number;
+  motivoCancelacion?: string;
+}
+
 /**
  * Respuesta de mis reservas - puede ser array de reservas o mensaje de vacío
  */
-export type MisReservasResponse = ReservaListResponse[] | MisReservasVacio;
+export type MisReservasResponse = MisReservasItem[] | MisReservasVacio;
 
 // ==================== ALIAS PARA COMPATIBILIDAD ====================
 

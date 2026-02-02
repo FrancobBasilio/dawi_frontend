@@ -216,7 +216,7 @@ export class ReservaPageComponent implements OnInit {
       .getHabitacionesDisponibles(hotelId, fechas.fechaInicio, fechas.fechaFin)
       .subscribe({
         next: (response) => {
-          this.habitacionesDisponibles.set(response.habitacionesDisponibles || []);
+          this.habitacionesDisponibles.set(response.habitaciones || []);
           this.loadingHabitaciones.set(false);
           // Reset selecciones al cambiar fechas
           this.habitacionesSeleccionadas.set([{ index: 1, habitacionId: null }]);
@@ -319,6 +319,7 @@ export class ReservaPageComponent implements OnInit {
     const apellido = nombreParts.slice(1).join(' ') || '';
 
     const reservaRequest: ReservaRequest = {
+      hotelId: hotelId,
       fechaInicio: fechasData.fechaInicio!,
       fechaFin: fechasData.fechaFin!,
       habitacionesIds: habitacionesIds,
@@ -334,7 +335,7 @@ export class ReservaPageComponent implements OnInit {
     this.submitting.set(true);
     this.errorMessage.set(null);
 
-    this.reservaService.crearReserva(hotelId, reservaRequest).subscribe({
+    this.reservaService.crearReserva(reservaRequest).subscribe({
       next: (response) => {
         // Redirigir a página de pago
         this.router.navigate(['/home/reserva', response.id, 'pago']);

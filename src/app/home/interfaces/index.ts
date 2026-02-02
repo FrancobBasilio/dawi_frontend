@@ -19,13 +19,10 @@ export type {
   // Habitación
   HabitacionResponse,
   HabitacionesDisponiblesResponse,
-  EstadoHabitacion,
 
   // Hotel
   HotelResponse,
-  HotelInfo,
   HotelDetalleResponse,
-  HotelesConDepartamentoResponse,
 
   // Reserva
   ReservaListResponse,
@@ -46,6 +43,6 @@ export type {
 export type DepartamentoPublic = import('../../interfaces').DepartamentoResponse;
 export type HabitacionPublic = import('../../interfaces').HabitacionResponse;
 export type TipoHabitacionPublic = import('../../interfaces').TipoHabitacionResponse;
-export type HotelPublic = import('../../interfaces').HotelInfo;
+export type HotelPublic = import('../../interfaces').HotelResponse;
 export type ReservaCompleta = import('../../interfaces').ReservaListResponse;
 export type ReservaDetalleResponse = import('../../interfaces').ReservaResponse;

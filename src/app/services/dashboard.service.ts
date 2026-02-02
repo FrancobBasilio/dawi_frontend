@@ -7,7 +7,7 @@ import { DashboardStats } from '../interfaces';
 // Re-exportar para uso externo
 export type { DashboardStats } from '../interfaces';
 
-const baseUrl = `${environment.apiUrl}/api/admin/dashboard`;
+const baseUrl = `${environment.apiUrl}/api/v1/admin/dashboard`;
 
 @Injectable({
   providedIn: 'root',

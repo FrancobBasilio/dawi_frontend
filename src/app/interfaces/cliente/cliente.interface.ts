@@ -7,7 +7,7 @@ export interface ClienteResponse {
   apellido: string;
   email: string;
   telefono: string;
-  documento: string;
+  dni: string;
 }
 
 /**

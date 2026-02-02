@@ -169,7 +169,7 @@ export class AuthService {
    */
   hasRole(role: string): boolean {
     const user = this._user();
-    return user?.role.rolename === role;
+    return user?.role === role;
   }
 
   /**
@@ -186,11 +186,11 @@ export class AuthService {
     console.log('💾 Guardando datos de autenticación...');
 
     // Guardar en localStorage PRIMERO
-    localStorage.setItem('token', resp.token);
+    localStorage.setItem('token', resp.accessToken);
     localStorage.setItem('user', JSON.stringify(resp.user));
 
     // Luego actualizar signals
-    this._token.set(resp.token);
+    this._token.set(resp.accessToken);
     this._user.set(resp.user);
     this._authStatus.set('authenticated');
 
@@ -234,7 +234,7 @@ export class AuthService {
    * Obtiene información del usuario actual desde el backend
    */
   me(): Observable<UserResponse> {
-    return this.http.get<UserResponse>(`${baseUrl}/auth/me`).pipe(
+    return this.http.get<UserResponse>(`${baseUrl}/users/me`).pipe(
       tap((user: UserResponse) => {
         console.log('📡 Usuario obtenido de /me:', user.username);
         this._user.set(user);

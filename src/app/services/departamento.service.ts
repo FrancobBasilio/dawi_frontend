@@ -4,7 +4,7 @@ import { environment } from '../enviroments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { DepartamentoResponse, DepartamentoRequest } from '../interfaces';
 
-const baseUrl = `${environment.apiUrl}/api/admin`;
+const baseUrl = `${environment.apiUrl}/api/v1`;
 
 @Injectable({
   providedIn: 'root',

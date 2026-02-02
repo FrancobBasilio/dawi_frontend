@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../enviroments/environment';
 
 @Component({
   standalone: true,
@@ -56,12 +57,18 @@ export class ContactoPageComponent {
       mensaje: this.mensaje()
     };
 
-    // Simular envío (puedes conectar a un endpoint real)
-    setTimeout(() => {
-      this.enviando.set(false);
-      this.enviado.set(true);
-      this.limpiarFormulario();
-    }, 1500);
+    this.http.post(`${environment.apiUrl}/api/v1/contacto`, contacto).subscribe({
+      next: () => {
+        this.enviando.set(false);
+        this.enviado.set(true);
+        this.limpiarFormulario();
+      },
+      error: (err) => {
+        console.error('Error enviando contacto:', err);
+        this.enviando.set(false);
+        this.error.set('No se pudo enviar el mensaje. Intente nuevamente.');
+      },
+    });
   }
 
   validarEmail(email: string): boolean {

@@ -63,7 +63,7 @@ export class ConfirmacionPageComponent implements OnInit {
   }
 
   get clienteDni(): string {
-    return this.reserva()?.cliente?.documento || 'N/A';
+    return this.reserva()?.cliente?.dni || 'N/A';
   }
 
   get clienteEmail(): string {
@@ -100,21 +100,10 @@ export class ConfirmacionPageComponent implements OnInit {
   /**
    * Obtiene información de habitación desde el hotel
    */
-  getHabitacionInfo(habitacionId: number): { numero: string; tipo: string; precio: number } {
-    const hotel = this.reserva()?.hotel;
-    if (!hotel?.habitaciones) {
-      return { numero: habitacionId.toString(), tipo: 'Standard', precio: 0 };
-    }
-
-    const habitacion = hotel.habitaciones.find(h => h.id === habitacionId);
-    if (!habitacion) {
-      return { numero: habitacionId.toString(), tipo: 'Standard', precio: 0 };
-    }
-
+  getHabitacionInfo(habitacionId: number): { numero: string; tipo: string } {
     return {
-      numero: habitacion.numero,
-      tipo: habitacion.tipoHabitacion?.nombre || 'Standard',
-      precio: habitacion.precio
+      numero: habitacionId.toString(),
+      tipo: 'Habitación',
     };
   }
 

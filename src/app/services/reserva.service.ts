@@ -4,7 +4,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../enviroments/environment';
 import { ReservaListResponse, ReservaAdminUpdateDTO } from '../interfaces';
 
-const baseUrl = `${environment.apiUrl}/api/admin`;
+const baseUrl = `${environment.apiUrl}/api/v1/admin`;
 
 @Injectable({
   providedIn: 'root',
@@ -30,11 +30,14 @@ export class ReservaService {
     );
   }
 
-  buscarPorDni(dni: string): Observable<ReservaListResponse[]> {
+  buscarPorDni(dni: string, estado?: string): Observable<ReservaListResponse[]> {
+    const params: Record<string, string> = { dni };
+    if (estado) {
+      params.estado = estado;
+    }
+
     return this.http
-      .get<ReservaListResponse[]>(`${baseUrl}/reservas/buscar`, {
-        params: { dni },
-      })
+      .get<ReservaListResponse[]>(`${baseUrl}/reservas`, { params })
       .pipe(
         catchError((error: any) => {
           console.error('Error al buscar reservas por DNI:', error);

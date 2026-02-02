@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { RegisterRequest } from '../../interfaces/auth.interface';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -26,6 +26,72 @@ export class RegisterPageComponent {
     password: ['', [Validators.required, Validators.minLength(8)]],
     repeatPassword: ['', [Validators.required, Validators.minLength(8)]],
   });
+
+  // Getters para acceso fácil a los controles del formulario
+  get usernameField() {
+    return this.registerForm.get('username');
+  }
+
+  get emailField() {
+    return this.registerForm.get('email');
+  }
+
+  get telefonoField() {
+    return this.registerForm.get('telefono');
+  }
+
+  get passwordField() {
+    return this.registerForm.get('password');
+  }
+
+  get repeatPasswordField() {
+    return this.registerForm.get('repeatPassword');
+  }
+
+  // Validación de contraseñas coincidentes
+  get passwordsMatch(): boolean {
+    const password = this.registerForm.get('password')?.value;
+    const repeatPassword = this.registerForm.get('repeatPassword')?.value;
+    return password === repeatPassword;
+  }
+
+  // Indicador de fuerza de contraseña
+  getPasswordStrength(): { level: number; label: string; color: string } {
+    const password = this.getPasswordValue();
+    let strength = 0;
+
+    if (password.length >= 8) strength++;
+    if (password.length >= 12) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+    if (strength <= 2) return { level: strength, label: 'Débil', color: 'bg-red-500' };
+    if (strength <= 4) return { level: strength, label: 'Media', color: 'bg-yellow-500' };
+    return { level: strength, label: 'Fuerte', color: 'bg-green-500' };
+  }
+
+  // Métodos helper para validaciones de contraseña (evita errores de null)
+  getPasswordValue(): string {
+    return this.passwordField?.value || '';
+  }
+
+  hasMinLength(): boolean {
+    return this.getPasswordValue().length >= 8;
+  }
+
+  hasUppercase(): boolean {
+    return /[A-Z]/.test(this.getPasswordValue());
+  }
+
+  hasNumber(): boolean {
+    return /[0-9]/.test(this.getPasswordValue());
+  }
+
+  showPasswordStrength(): boolean {
+    return this.getPasswordValue().length > 0;
+  }
 
   onSubmit() {
     console.log('🔵 Formulario enviado');

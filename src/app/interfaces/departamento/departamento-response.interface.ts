@@ -4,7 +4,6 @@
 export interface DepartamentoResponse {
   id: number;
   nombre: string;
-  detalle: string;
 }
 
 /**
@@ -12,5 +11,4 @@ export interface DepartamentoResponse {
  */
 export interface DepartamentoRequest {
   nombre: string;
-  detalle?: string;
 }

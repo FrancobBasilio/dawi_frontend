@@ -55,12 +55,9 @@ export class CreateHotelPageComponent implements OnInit {
     const formValue = this.hotelForm.getRawValue();
 
     const hotelData = {
-      ...formValue,
       nombre: formValue.nombre ?? '',
       direccion: formValue.direccion ?? '',
       departamentoId: Number(formValue.departamentoId),
-      habitaciones: [],
-      imagenUrl: '',
     };
 
     this.hotelService.createHotel(hotelData).subscribe({

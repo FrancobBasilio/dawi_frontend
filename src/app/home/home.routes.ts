@@ -8,6 +8,8 @@ import { ConfirmacionPageComponent } from './pages/confirmacion-page/confirmacio
 import { MisReservasPageComponent } from './pages/mis-reservas-page/mis-reservas-page.component';
 import { ContactoPageComponent } from './pages/contacto-page/contacto-page.component';
 import { ClienteLayoutComponent } from './layout/cliente-layout/cliente-layout.component';
+import { NotificacionesPageComponent } from './pages/notificaciones-page/notificaciones-page.component';
+import { authGuard } from '../auth/guards/auth.guard';
 
 export const homeRoutes: Routes = [
   {
@@ -37,14 +39,22 @@ export const homeRoutes: Routes = [
       {
         path: 'reserva/:reservaId/pago',
         component: PagoPageComponent,
+        canActivate: [authGuard],
       },
       {
         path: 'reserva/:reservaId/confirmacion',
         component: ConfirmacionPageComponent,
+        canActivate: [authGuard],
       },
       {
         path: 'mis-reservas',
         component: MisReservasPageComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'notificaciones',
+        component: NotificacionesPageComponent,
+        canActivate: [authGuard],
       },
       {
         path: 'contacto',

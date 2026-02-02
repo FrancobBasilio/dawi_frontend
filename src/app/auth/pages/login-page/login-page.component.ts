@@ -10,26 +10,38 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './login-page.component.html',
 })
 export class LoginPageComponent {
-
   fb = inject(FormBuilder);
   hasError = signal(false);
   isPosting = signal(false);
+  errorMessage = signal('');
 
   router = inject(Router);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(8)]]
-  })
+    password: ['', [Validators.required, Validators.minLength(8)]],
+  });
+
+  // Getters para acceso fácil a los controles del formulario
+  get emailField() {
+    return this.loginForm.get('email');
+  }
+
+  get passwordField() {
+    return this.loginForm.get('password');
+  }
 
   authService = inject(AuthService);
 
   onSubmit() {
     if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      this.errorMessage.set('Por favor corrige los errores en el formulario');
       this.hasError.set(true);
       setTimeout(() => {
-        this.hasError.set(false)
-      }, 2000)
+        this.hasError.set(false);
+        this.errorMessage.set('');
+      }, 3000);
       return;
     }
 
@@ -37,7 +49,7 @@ export class LoginPageComponent {
 
     const loginRequest: LoginRequest = {
       email: email,
-      password: password
+      password: password,
     };
 
     this.isPosting.set(true);
@@ -56,7 +68,7 @@ export class LoginPageComponent {
         }
 
         // Redirigir según el rol
-        if (user.role.rolename === 'ADMIN') {
+        if (user.role === 'ADMIN') {
           this.router.navigate(['/admin']);
         } else {
           this.router.navigate(['/home']);
@@ -67,9 +79,7 @@ export class LoginPageComponent {
         this.isPosting.set(false);
         this.hasError.set(true);
         setTimeout(() => this.hasError.set(false), 3000);
-      }
+      },
     });
   }
 }
-
-

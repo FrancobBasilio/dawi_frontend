@@ -7,7 +7,7 @@ import { ReservaService } from '../../../../services/reserva.service';
 import { HotelService } from '../../../../services/hotel.service';
 import { DepartamentoService } from '../../../../services/departamento.service';
 
-import { HotelResponse, HabitacionResponse, Reserva, ReservaAdminUpdateDTO, DepartamentoResponse } from '../../../../interfaces';
+import { HotelDetalleResponse, HotelResponse, HabitacionResponse, Reserva, ReservaAdminUpdateDTO, DepartamentoResponse } from '../../../../interfaces';
 
 interface HabitacionSeleccionada {
   index: number;
@@ -53,6 +53,7 @@ export class EditReservaComponent implements OnInit {
     fechaInicio: ['', Validators.required],
     fechaFin: ['', Validators.required],
     estado: ['CONFIRMADA', Validators.required],
+    motivoCancelacion: [''],
   });
 
   estados = [
@@ -116,12 +117,13 @@ export class EditReservaComponent implements OnInit {
       hotelId: reserva.hotel?.id ? String(reserva.hotel.id) : '',
       clienteNombre: reserva.cliente?.nombre || '',
       clienteApellido: reserva.cliente?.apellido || '',
-      clienteDni: reserva.cliente?.documento || '',
+      clienteDni: reserva.cliente?.dni || '',
       clienteCorreo: reserva.cliente?.email || '',
       clienteTelefono: reserva.cliente?.telefono || '',
       fechaInicio: reserva.fechaInicio || '',
       fechaFin: reserva.fechaFin || '',
       estado: reserva.estado || 'CONFIRMADA',
+      motivoCancelacion: (reserva as any)?.motivoCancelacion || '',
     });
 
     // Cargar habitaciones del hotel
@@ -294,6 +296,14 @@ export class EditReservaComponent implements OnInit {
       habitaciones: habitacionesIds,
     };
 
+    if (formValue.estado === 'CANCELADA') {
+      if (!formValue.motivoCancelacion?.trim()) {
+        this.errorMessage.set('Debe ingresar un motivo de cancelación');
+        return;
+      }
+      reservaData.motivoCancelacion = formValue.motivoCancelacion?.trim();
+    }
+
     console.log('Enviando actualización:', reservaData);
 
     this.saving.set(true);
@@ -317,6 +327,16 @@ export class EditReservaComponent implements OnInit {
 
   formatCurrency(amount: number): string {
     return `S/ ${amount.toFixed(2)}`;
+  }
+
+  formatDate(dateString?: string | null): string {
+    if (!dateString) return 'No disponible';
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('es-PE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   }
 
   // Getters para validaciones

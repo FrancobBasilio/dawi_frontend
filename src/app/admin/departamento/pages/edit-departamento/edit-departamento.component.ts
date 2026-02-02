@@ -23,7 +23,6 @@ export class EditDepartamentoComponent implements OnInit {
 
   departamentoForm = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
-    detalle: ['', [Validators.required, Validators.minLength(5)]],
   });
 
   ngOnInit(): void {
@@ -43,7 +42,6 @@ export class EditDepartamentoComponent implements OnInit {
       next: (departamento) => {
         this.departamentoForm.patchValue({
           nombre: departamento.nombre,
-          detalle: departamento.detalle,
         });
         this.loading.set(false);
       },
@@ -69,7 +67,6 @@ export class EditDepartamentoComponent implements OnInit {
 
     const departamentoData = {
       nombre: formValue.nombre ?? '',
-      detalle: formValue.detalle ?? '',
     };
 
     this.departamentoService.update(id, departamentoData).subscribe({
@@ -91,8 +88,4 @@ export class EditDepartamentoComponent implements OnInit {
     return !!(control?.invalid && control?.touched);
   }
 
-  get detalleInvalid(): boolean {
-    const control = this.departamentoForm.get('detalle');
-    return !!(control?.invalid && control?.touched);
-  }
 }

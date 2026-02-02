@@ -20,7 +20,6 @@ export class CreateDepartamentoComponent {
 
   departamentoForm = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
-    detalle: ['', [Validators.required, Validators.minLength(5)]],
   });
 
   onSubmit(): void {
@@ -34,7 +33,6 @@ export class CreateDepartamentoComponent {
 
     const departamentoData = {
       nombre: formValue.nombre ?? '',
-      detalle: formValue.detalle ?? '',
     };
 
     this.departamentoService.create(departamentoData).subscribe({
@@ -56,8 +54,4 @@ export class CreateDepartamentoComponent {
     return !!(control?.invalid && control?.touched);
   }
 
-  get detalleInvalid(): boolean {
-    const control = this.departamentoForm.get('detalle');
-    return !!(control?.invalid && control?.touched);
-  }
 }

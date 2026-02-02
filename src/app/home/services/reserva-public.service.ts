@@ -4,17 +4,16 @@ import { environment } from '../../enviroments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import {
   DepartamentoResponse,
-  HotelesConDepartamentoResponse,
+  HotelResponse,
   HotelDetalleResponse,
   HabitacionesDisponiblesResponse,
   ReservaRequest,
   ReservaCreatedResponse,
   ReservaResponse,
-  ReservaListResponse,
   MisReservasResponse,
 } from '../../interfaces';
 
-const baseUrl = `${environment.apiUrl}/api/public`;
+const baseUrl = `${environment.apiUrl}/api/v1`;
 
 @Injectable({
   providedIn: 'root',
@@ -24,10 +23,8 @@ export class ReservaPublicService {
 
   // ==================== DEPARTAMENTOS ====================
 
-  getDepartamentos(nombre?: string): Observable<DepartamentoResponse[]> {
-    const url = nombre
-      ? `${baseUrl}/reserva/departamentos?nombre=${encodeURIComponent(nombre)}`
-      : `${baseUrl}/reserva/departamentos`;
+  getDepartamentos(): Observable<DepartamentoResponse[]> {
+    const url = `${baseUrl}/departamentos`;
 
     return this.http.get<DepartamentoResponse[]>(url).pipe(
       catchError((error: any) => {
@@ -39,9 +36,9 @@ export class ReservaPublicService {
 
   // ==================== HOTELES ====================
 
-  getHotelesPorDepartamento(depId: number): Observable<HotelesConDepartamentoResponse> {
+  getHotelesPorDepartamento(depId: number): Observable<HotelResponse[]> {
     return this.http
-      .get<HotelesConDepartamentoResponse>(`${baseUrl}/reserva/hoteles?depId=${depId}`)
+      .get<HotelResponse[]>(`${baseUrl}/hoteles?departamentoId=${depId}`)
       .pipe(
         catchError((error: any) => {
           console.error('Error al obtener hoteles:', error);
@@ -51,7 +48,7 @@ export class ReservaPublicService {
   }
 
   getHotelDetalle(hotelId: number): Observable<HotelDetalleResponse> {
-    return this.http.get<HotelDetalleResponse>(`${baseUrl}/reserva/hoteles/${hotelId}`).pipe(
+    return this.http.get<HotelDetalleResponse>(`${baseUrl}/hoteles/${hotelId}`).pipe(
       catchError((error: any) => {
         console.error('Error al obtener detalle del hotel:', error);
         return throwError(() => error);
@@ -68,7 +65,7 @@ export class ReservaPublicService {
   ): Observable<HabitacionesDisponiblesResponse> {
     return this.http
       .get<HabitacionesDisponiblesResponse>(
-        `${baseUrl}/reserva/hoteles/${hotelId}/habitaciones-disponibles?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`
+        `${baseUrl}/habitaciones?hotelId=${hotelId}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`
       )
       .pipe(
         catchError((error: any) => {
@@ -80,9 +77,9 @@ export class ReservaPublicService {
 
   // ==================== RESERVAS ====================
 
-  crearReserva(hotelId: number, reserva: ReservaRequest): Observable<ReservaCreatedResponse> {
+  crearReserva(reserva: ReservaRequest): Observable<ReservaCreatedResponse> {
     return this.http
-      .post<ReservaCreatedResponse>(`${baseUrl}/reserva/hoteles/${hotelId}/reservar`, reserva)
+      .post<ReservaCreatedResponse>(`${baseUrl}/reservas`, reserva)
       .pipe(
         catchError((error: any) => {
           console.error('Error al crear reserva:', error);
@@ -92,7 +89,7 @@ export class ReservaPublicService {
   }
 
   getReservaDetalle(reservaId: number): Observable<ReservaResponse> {
-    return this.http.get<ReservaResponse>(`${baseUrl}/reserva/reserva/${reservaId}`).pipe(
+    return this.http.get<ReservaResponse>(`${baseUrl}/reservas/${reservaId}`).pipe(
       catchError((error: any) => {
         console.error('Error al obtener detalle de reserva:', error);
         return throwError(() => error);
@@ -100,8 +97,8 @@ export class ReservaPublicService {
     );
   }
 
-  getMisReservas(fechaInicio?: string, fechaFin?: string): Observable<MisReservasResponse> {
-    let url = `${baseUrl}/reserva/mis-reservas`;
+  getMisReservas(fechaInicio?: string, fechaFin?: string, estado?: string): Observable<MisReservasResponse> {
+    let url = `${baseUrl}/mis-reservas`;
     const params: string[] = [];
 
     if (fechaInicio) {
@@ -109,6 +106,9 @@ export class ReservaPublicService {
     }
     if (fechaFin) {
       params.push(`fechaFin=${fechaFin}`);
+    }
+    if (estado && estado !== 'TODOS') {
+      params.push(`estado=${estado}`);
     }
 
     if (params.length > 0) {
@@ -124,7 +124,7 @@ export class ReservaPublicService {
   }
 
   confirmarPago(reservaId: number): Observable<any> {
-    return this.http.post(`${baseUrl}/reserva/${reservaId}/confirmar-pago`, {}).pipe(
+    return this.http.post(`${baseUrl}/reservas/${reservaId}/confirmar-pago`, {}).pipe(
       catchError((error: any) => {
         console.error('Error al confirmar pago:', error);
         return throwError(() => error);

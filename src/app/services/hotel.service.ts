@@ -2,9 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../enviroments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
-import { HotelResponse, HotelRequest } from '../interfaces';
+import { HotelDetalleResponse, HotelResponse, HotelRequest } from '../interfaces';
 
-const baseUrl = `${environment.apiUrl}/api/admin`;
+const baseUrl = `${environment.apiUrl}/api/v1`;
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ export class HotelService {
   }
 
   getByDepartamento(depId: number): Observable<HotelResponse[]> {
-    return this.http.get<HotelResponse[]>(`${baseUrl}/hoteles/departamento/${depId}`).pipe(
+    return this.http.get<HotelResponse[]>(`${baseUrl}/hoteles?departamentoId=${depId}`).pipe(
       catchError((error: any) => {
         console.error('Error al obtener hoteles por departamento:', error);
         return throwError(() => error);
@@ -30,8 +30,8 @@ export class HotelService {
     );
   }
 
-  getById(idHotel: number): Observable<HotelResponse> {
-    return this.http.get<HotelResponse>(`${baseUrl}/hoteles/${idHotel}`).pipe(
+  getById(idHotel: number): Observable<HotelDetalleResponse> {
+    return this.http.get<HotelDetalleResponse>(`${baseUrl}/hoteles/${idHotel}`).pipe(
       catchError((error: any) => {
         console.error('Error al obtener hotel:', error);
         return throwError(() => error);

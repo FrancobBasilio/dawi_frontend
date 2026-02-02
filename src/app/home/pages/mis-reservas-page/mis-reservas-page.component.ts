@@ -4,7 +4,7 @@ import { environment } from '../../../enviroments/environment';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { ReservaPublicService } from '../../services/reserva-public.service';
-import { ReservaListResponse } from '../../../interfaces';
+import { MisReservasItem } from '../../../interfaces';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -19,8 +19,8 @@ export class MisReservasPageComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  reservas = signal<ReservaListResponse[]>([]);
-  reservasFiltradas = signal<ReservaListResponse[]>([]);
+  reservas = signal<MisReservasItem[]>([]);
+  reservasFiltradas = signal<MisReservasItem[]>([]);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
   successMessage = signal<string | null>(null);
@@ -32,7 +32,7 @@ export class MisReservasPageComponent implements OnInit {
 
   // Modal eliminar
   showModalEliminar = signal<boolean>(false);
-  reservaSeleccionada = signal<ReservaListResponse | null>(null);
+  reservaSeleccionada = signal<MisReservasItem | null>(null);
   procesando = signal<boolean>(false);
 
   // Modal editar
@@ -52,7 +52,7 @@ export class MisReservasPageComponent implements OnInit {
     const fechaInicio = this.filtroFechaInicio() || undefined;
     const fechaFin = this.filtroFechaFin() || undefined;
 
-    this.reservaService.getMisReservas(fechaInicio, fechaFin).subscribe({
+    this.reservaService.getMisReservas(fechaInicio, fechaFin, estado).subscribe({
       next: (data) => {
         console.log(data);
         if (Array.isArray(data)) {
@@ -118,7 +118,7 @@ export class MisReservasPageComponent implements OnInit {
   }
 
   // === MODAL ELIMINAR ===
-  abrirModalEliminar(reserva: ReservaListResponse): void {
+  abrirModalEliminar(reserva: MisReservasItem): void {
     this.reservaSeleccionada.set(reserva);
     this.showModalEliminar.set(true);
   }
@@ -134,7 +134,7 @@ export class MisReservasPageComponent implements OnInit {
 
     this.procesando.set(true);
 
-    this.http.delete(`${environment.apiUrl}/api/public/reserva/${reserva.id}`).subscribe({
+    this.http.delete(`${environment.apiUrl}/api/v1/reservas/${reserva.id}/cancelar`).subscribe({
       next: () => {
         this.procesando.set(false);
         this.cerrarModalEliminar();
@@ -158,7 +158,7 @@ export class MisReservasPageComponent implements OnInit {
   }
 
   // === MODAL EDITAR ===
-  abrirModalEditar(reserva: ReservaListResponse): void {
+  abrirModalEditar(reserva: MisReservasItem): void {
     this.reservaSeleccionada.set(reserva);
     this.editFechaInicio.set(reserva.fechaInicio);
     this.editFechaFin.set(reserva.fechaFin);
@@ -235,7 +235,7 @@ export class MisReservasPageComponent implements OnInit {
     this.editError.set(null);
 
     this.http
-      .put(`${environment.apiUrl}/api/public/reserva/${reserva.id}`, {
+      .put(`${environment.apiUrl}/api/v1/mis-reservas/${reserva.id}`, {
         fechaInicio: fechaInicio,
         fechaFin: fechaFin,
       })
@@ -286,13 +286,13 @@ export class MisReservasPageComponent implements OnInit {
   getEstadoClass(estado: string): string {
     switch (estado) {
       case 'CONFIRMADA':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/40';
       case 'PENDIENTE':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-amber-500/20 text-amber-200 border border-amber-500/40';
       case 'CANCELADA':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500/20 text-red-200 border border-red-500/40';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-700/40 text-slate-200 border border-slate-600/60';
     }
   }
 

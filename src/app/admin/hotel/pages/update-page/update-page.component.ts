@@ -1,12 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 
 import { forkJoin } from 'rxjs';
-import { TipoHabitacionResponse } from '../../../../interfaces';
 import { HotelService } from '../../../../services/hotel.service';
-import { TipoHabitacionService } from '../../../../services/tipo-habitacion.service';
 import { DepartamentoService } from '../../../../services/departamento.service';
 
 @Component({
@@ -19,7 +17,6 @@ export class UpdateHotelFormComponent implements OnInit {
   hotelForm!: FormGroup;
 
 
-  tiposHabitacion = signal<TipoHabitacionResponse[]>([]);
   departamentos = signal<any[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
@@ -29,7 +26,6 @@ export class UpdateHotelFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private hotelService: HotelService,
-    private tipoHabitacionService: TipoHabitacionService,
     private departamentoService: DepartamentoService,
     private route: ActivatedRoute,
     private router: Router
@@ -52,33 +48,8 @@ export class UpdateHotelFormComponent implements OnInit {
     this.hotelForm = this.fb.group({
       nombre: ['', Validators.required],
       direccion: ['', Validators.required],
-      departamento: ['', Validators.required],
-      habitaciones: this.fb.array([])
+      departamento: ['', Validators.required]
     });
-  }
-
-  get habitaciones(): FormArray {
-    return this.hotelForm.get('habitaciones') as FormArray;
-  }
-
-  nuevaHabitacion(hab?: any): FormGroup {
-    return this.fb.group({
-      id: [hab?.id || null],
-      numero: [hab?.numero || '', Validators.required],
-      estado: [hab?.estado || 'DISPONIBLE', Validators.required],
-      precio: [hab?.precio || 0, [Validators.required, Validators.min(0)]],
-      tipoHabitacion: [hab?.tipoHabitacion?.id ?? null, Validators.required]
-    });
-  }
-
-  addHabitacion(hab?: any) {
-    this.habitaciones.push(this.nuevaHabitacion(hab));
-  }
-
-  removeHabitacion(i: number) {
-    if (confirm('¿Estás seguro de eliminar esta habitación?')) {
-      this.habitaciones.removeAt(i);
-    }
   }
 
   loadData() {
@@ -86,17 +57,11 @@ export class UpdateHotelFormComponent implements OnInit {
     this.error.set(null);
 
     forkJoin({
-      tipos: this.tipoHabitacionService.getAll(),
       departamentos: this.departamentoService.getAll(),
       hotel: this.hotelService.getById(this.hotelId)
     }).subscribe({
-      next: ({ tipos, departamentos, hotel }) => {
-        console.log('Datos cargados:', { tipos, departamentos, hotel });
-
-
-        this.tiposHabitacion.set(tipos);
+      next: ({ departamentos, hotel }) => {
         this.departamentos.set(departamentos);
-
 
         this.hotelForm.patchValue({
           nombre: hotel.nombre,
@@ -104,21 +69,7 @@ export class UpdateHotelFormComponent implements OnInit {
           departamento: hotel.departamento?.id || ''
         });
 
-        // Limpiar habitaciones
-        while (this.habitaciones.length > 0) {
-          this.habitaciones.removeAt(0);
-        }
-
-
-        if (hotel.habitaciones && hotel.habitaciones.length > 0) {
-          hotel.habitaciones.forEach((hab: any) => {
-            this.addHabitacion(hab);
-          });
-        }
-
-
         this.loading.set(false);
-        console.log('Formulario cargado:', this.hotelForm.value);
       },
       error: (err) => {
         console.error('Error al cargar datos:', err);
@@ -149,14 +100,6 @@ export class UpdateHotelFormComponent implements OnInit {
       nombre: this.hotelForm.value.nombre,
       direccion: this.hotelForm.value.direccion,
       departamentoId: Number(this.hotelForm.value.departamento),
-      habitaciones: this.hotelForm.value.habitaciones.map((hab: any) => ({
-        ...(hab.id ? { id: hab.id } : {}),
-        numero: hab.numero,
-        estado: hab.estado,
-        precio: hab.precio,
-        tipoHabitacionId: Number(hab.tipoHabitacion),
-      })),
-      imagenUrl: ''
     };
 
     console.log('Payload a enviar:', payload);

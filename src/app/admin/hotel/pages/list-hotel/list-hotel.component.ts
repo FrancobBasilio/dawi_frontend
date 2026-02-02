@@ -120,7 +120,7 @@ export class ListHotelPageComponent implements OnInit {
     });
   }
 
-  getCantidadHabitaciones(hotel: HotelResponse): number {
-    return hotel.habitaciones?.length || 0;
+  getCantidadHabitaciones(): string {
+    return 'N/D';
   }
 }
